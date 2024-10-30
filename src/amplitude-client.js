@@ -10,7 +10,7 @@ import md5 from 'blueimp-md5';
 import Request from './xhr';
 import Revenue from './revenue';
 import type from './type';
-import {DetectUA} from 'detect-ua'; // Identifying device and browser info (maybe move to backend?)
+import UAParser from '@amplitude/ua-parser-js'; // Identifying device and browser info (maybe move to backend?)
 import utils from './utils';
 import UUID from './uuid';
 import base64Id from './base64Id';
@@ -66,7 +66,7 @@ var AmplitudeClient = function AmplitudeClient(instanceName) {
   this._connector = null;
 
   this._userAgent = (typeof navigator !== 'undefined' && navigator && navigator.userAgent) || null;
-  this._ua = new DetectUA(this._userAgent)
+  this._ua = new UAParser(this._userAgent).getResult();
 };
 
 AmplitudeClient.prototype.Identify = Identify;
@@ -2006,7 +2006,7 @@ AmplitudeClient.prototype._mergeEventsAndIdentifys = function _mergeEventsAndIde
       if (
         !('sequence_number' in this._unsentEvents[eventIndex].event) ||
         this._unsentEvents[eventIndex].event.sequence_number <
-          this._unsentIdentifys[identifyIndex].event.sequence_number
+        this._unsentIdentifys[identifyIndex].event.sequence_number
       ) {
         unsentEvent = this._unsentEvents[eventIndex++];
         maxEventId = unsentEvent.event.event_id;
